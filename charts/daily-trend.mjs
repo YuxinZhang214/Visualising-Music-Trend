@@ -19,7 +19,7 @@ export const initializeDailyTrendChart = () => {
 
 const initializeDropdowns = (data) => {
 
-    console.log(data[0].year, data[0].country_fullname)
+    console.log(data[0].date, data[0].country_fullname)
 
     // Extract unique years and countries
     const years = Array.from(new Set(data.map(d => d.date.getFullYear()))).sort((a, b) => a - b);
@@ -63,7 +63,7 @@ export const drawDailyTrendChart = async (selectedYear, selectedCountry) => {
 
     const data = rawData.filter(d => {
         return (!selectedYear || d.date.getFullYear().toString() === selectedYear) &&
-               (!selectedCountry || d.country === selectedCountry);
+               (!selectedCountry || d.country_fullname === selectedCountry);
     });
 
     initializeDropdowns(data);
@@ -113,8 +113,11 @@ export const drawDailyTrendChart = async (selectedYear, selectedCountry) => {
       .attr("class", "bar")
       .attr("x", d => x(d.date))
       .attr("y", d => y(d.streams))
-      .attr("width", barWidth) 
+      .attr("width", barWidth)
       .attr("height", d => height - margin.bottom - y(d.streams))
-      .attr("fill", "#4c51bf"); 
+      .attr("fill", "#4c51bf")
+      .on("click", d => {
+        // window.location.href = `/song-details-page?date=${d.date.toISOString()}&country=${encodeURIComponent(d.country_fullname)}`;
+    });
   
 };

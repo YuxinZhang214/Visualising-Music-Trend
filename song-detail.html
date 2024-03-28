@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Song Details</title>
+        <style>
+            #song-details {
+                margin: 20px;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+            }
+        </style>
+    </head>
+    <body>
+
+    <div id="song-details">
+        <!-- Details will be inserted here -->
+    </div>
+
+    <button onclick="window.history.back();">Back to Chart</button>
+
+    <script>
+        // Helper function to parse the query parameters
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const vars = queryString.split("&");
+            vars.forEach((pair) => {
+                const [key, value] = pair.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value.replace(/\+/g, " "));
+            });
+            return params;
+        }
+
+        // Function to display song details
+        function displaySongDetails(details) {
+            const detailsDiv = document.getElementById("song-details");
+            detailsDiv.innerHTML = `
+                <h1>${details.title}</h1>
+                <p><strong>Date:</strong> ${details.date}</p>
+                <p><strong>Country:</strong> ${details.country}</p>
+                <p><strong>Streams:</strong> ${details.streams}</p>
+                <!-- Add more details as needed -->
+            `;
+        }
+
+        // Fetch and display the song details based on query parameters
+        function fetchSongDetails() {
+            const queryParams = getQueryParams();
+            console.log(queryParams.date, queryParams.country);
+            
+            // TODO: Fetch the actual song details from your data or backend
+            // This is just a placeholder for demonstration purposes
+            const songDetails = {
+                title: "Sample Song Title",
+                date: queryParams.date,
+                country: queryParams.country,
+                streams: "42,000" // Placeholder value
+            };
+            
+            displaySongDetails(songDetails);
+        }
+
+        // Call the function to fetch and display the song details
+        fetchSongDetails();
+    </script>
+
+    </body>
+</html>
