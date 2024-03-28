@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Visualising music Trend across the Global </title>
+        <link href="./output.css" rel="stylesheet">
+        <!-- Reference to D3.js -->
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="main.mjs" type="module"></script>
+    </head>
+    <body class="bg-gray-100">
+        <div class="container mx-auto px-4 py-5">
+            <div class="my-4">
+                <label for="year-select" class="block text-sm font-medium text-gray-700">Select Year</label>
+                <select id="year-select" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+            <div class="my-4">
+                <label for="country-select" class="block text-sm font-medium text-gray-700">Select Country</label>
+                <select id="country-select" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+            <h1 class="text-4xl font-bold text-center text-gray-800 mb-5">Daily Music Trend Chart</h1>
+            <div id="daily-trend-chart" class="bg-white p-6 rounded-lg shadow-lg"></div>
+        </div>
+    </body>
+</html>
