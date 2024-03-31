@@ -1,5 +1,5 @@
-import { initializeDailyTrendChart } from './charts/daily-trend.mjs';
+import { DailyTrendChart } from './charts/DailyTrendChart.mjs';
 
 document.addEventListener('DOMContentLoaded', () => {
-  initializeDailyTrendChart();
+  new DailyTrendChart('./dataset/music.csv');
 });
