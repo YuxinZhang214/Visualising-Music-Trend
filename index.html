@@ -38,12 +38,33 @@
     </div>
 
     <!-- Main Chart Area -->
-    <main class="w-full py-6 sm:px-6 lg:px-8">
-        <div class="px-4 py-6 sm:px-0">
-            <div id="daily-trend-chart" class="rounded-lg  p-5 shadow">
+    <main class="w-full py-6 sm:px-6 lg:px-8 h-2/3">
+        <div id="daily-trend-chart" class="rounded-lg p-5 h-full">
+            <!-- D3.js Chart will be injected here -->
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between">
+            <!-- Top Tracks Chart -->
+            <div id="top-tracks-chart" class="rounded-lg bg-gray-800 p-5 w-1/2 mr-2">
+                <h2 class="text-lg font-semibold mb-4">Top Tracks</h2>
+                <!-- D3.js Chart will be injected here -->
+            </div>
+        
+            <!-- Artists Chart -->
+            <div id="top-artists-chart" class="rounded-lg bg-gray-800 p-5 w-1/2 ml-2">
+                <h2 class="text-lg font-semibold mb-4">Top Artists</h2>
                 <!-- D3.js Chart will be injected here -->
             </div>
         </div>
+
+        <!-- Genre Analysis Space -->
+        <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 mt-8">
+            <div id="genre-analysis" class="rounded-lg bg-gray-800 p-5">
+                <h2 class="text-lg font-semibold">Genre Analysis</h2>
+                <!-- Space for Genre Analysis Visualization -->
+            </div>
+        </div>
+
     </main>
 </body>
 </html>
