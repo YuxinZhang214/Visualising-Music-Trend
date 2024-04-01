@@ -13,8 +13,7 @@ export class DailyTrendChart extends BaseChart{
     const containerRect = container.node().getBoundingClientRect();
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
-    
-    // Setup dimensions and margins
+  
     const margin = { top: 30, right: 50, bottom: 50, left: 50 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
