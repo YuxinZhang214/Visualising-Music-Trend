@@ -9,7 +9,7 @@ export class TopTracksChart extends BaseChart {
 
   drawChart(data) {
 
-    const trackStreams = d3.rollup(data, v => d3.sum(v, d => d.streams), d => d.track_name);
+    const trackStreams = d3.rollup(data, v => d3.sum(v, d => d.streams), d => d.name);
     const sortedTracks = Array.from(trackStreams).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
     const container = d3.select(`#${this.chartId}`);
@@ -17,7 +17,7 @@ export class TopTracksChart extends BaseChart {
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
   
-    const margin = { top: 30, right: 50, bottom: 50, left: 50 };
+    const margin = { top: 30, right: 50, bottom: 50, left: 100 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
@@ -35,28 +35,30 @@ export class TopTracksChart extends BaseChart {
     .domain([0, d3.max(sortedTracks, d => d[1])])
     .range([0, width]);
 
-  const y = d3.scaleBand()
+    const y = d3.scaleBand()
     .domain(sortedTracks.map(d => d[0]))
     .rangeRound([0, height])
     .paddingInner(0.1);
+
+    const formatNumber = d3.format(".1s");
   
     // Add the x-axis to the chart
     svg.append("g")
-      .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x));
+      .attr("transform", `translate(0,${height})`)
+      .call(d3.axisBottom(x).tickFormat(formatNumber));
 
     // X-axis label
     svg.append("text")
       .attr("text-anchor", "end")
-      .attr("x", width / 2 + margin.left)
-      .attr("y", height + margin.top)
-      .text("Date")
+      .attr("x", width / 2.5 + margin.left)
+      .attr("y", height + margin.top + 10)
+      .text("Streams")
       .style("fill", 'white')
       .style("font-size", "20px")
   
     // Add the y-axis to the chart
     svg.append("g")
-      .attr("transform", `translate(${margin.left},0)`)
+      //.attr("transform", `translate(${margin.left},0)`)
       .call(d3.axisLeft(y));
 
     // Y-axis label
@@ -64,8 +66,8 @@ export class TopTracksChart extends BaseChart {
       .attr("text-anchor", "end")
       .attr("transform", "rotate(-90)")
       .attr("y", -margin.left + 20)
-      .attr("x", -margin.top - height/2 )
-      .text("Streams")
+      .attr("x", -margin.top - height/2.5 )
+      .text("Top Track")
       .style("fill", 'white')
       .style("font-size", "20px"); 
 
@@ -85,7 +87,7 @@ export class TopTracksChart extends BaseChart {
       .attr('fill', '#4c51bf');
 
     const legend = svg.append("g")
-     .attr("transform", `translate(${width - 100},${20})`);
+    .attr("transform", `translate(${width - 100},-30)`);
 
     legend.append("rect")
       .attr("width", 18)
