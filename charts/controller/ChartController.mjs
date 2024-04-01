@@ -7,11 +7,21 @@ export class ChartController {
   
     async loadAndPrepareData() {
       const rawData = await d3.csv(this.datasetPath);
-      this.rawData = rawData.map(d => ({
-        ...d,
-        date: new Date(d.date),
-        streams: +d.streams,
-      }));
+      this.rawData = rawData.map(d => {
+        let artists = [];
+        try {
+          artists = JSON.parse(d.artists.replace(/'/g, '"'));
+        } catch (e) {
+          console.error('Failed to parse artists', d.artists);
+        }
+    
+        return {
+          ...d,
+          date: new Date(d.date),
+          streams: +d.streams,
+          artists: artists
+        };
+      });
       this.years = Array.from(new Set(this.rawData.map(d => d.date.getFullYear()))).sort((a, b) => a - b);
       this.countries = Array.from(new Set(this.rawData.map(d => d.country_fullname))).sort();
 
