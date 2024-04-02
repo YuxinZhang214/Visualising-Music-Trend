@@ -36,6 +36,17 @@ export class TopArtistsChart extends BaseChart {
     const margin = { top: 30, right: 100, bottom: 100, left: 50 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
+
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("background", "#fff")
+      .style("border", "1px solid #000")
+      .style("padding", "5px")
+      .style("color", "black");
+   
   
     container.select('svg').remove();
   
@@ -88,7 +99,7 @@ export class TopArtistsChart extends BaseChart {
       .text("Streams")
       .style("fill", 'white')
       .style("font-size", "16px");
-  
+
     // Draw the bars
     svg.selectAll(".bar")
       .data(sortedArtists)
@@ -98,7 +109,29 @@ export class TopArtistsChart extends BaseChart {
       .attr("width", x.bandwidth())
       .attr("y", d => y(d.streams))
       .attr("height", d => height - y(d.streams))
-      .attr("fill", "#4c51bf");
+      .attr("fill", "#4c51bf")
+      .on('mouseover', function(event, d) {
+        tooltip.style("visibility", "visible")
+            .text(`Exact Streams Values: ${d.streams}`)
+            .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        d3.select(this)
+          .attr('fill', '#ffab00');
+      })
+      .on('mousemove', function(event) {
+        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+      })
+      .on('mouseout', function(event, d) {
+        tooltip.style("visibility", "hidden");
+        d3.select(this)
+          .attr('fill', '#4c51bf'); 
+      })
+      .on('click', (event, d) => {
+        // Construct a URL for the artist's Wikipedia page
+        console.log(d.artist)
+        const url = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(d.artist)}`;
+        // Open the URL in a new tab
+        window.open(url, '_blank');
+      });
 
      // Legend (example for one legend item)
     const legend = svg.append("g")

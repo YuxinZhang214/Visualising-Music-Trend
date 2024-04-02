@@ -26,8 +26,8 @@ export class GenreAnalysis extends BaseChart {
       artistCount: artistSet.size
     }));
   
-    let top10 = genreData.sort((a, b) => b.totalStreams - a.totalStreams).slice(0, 10);
-    let reversed_top10 = top10.sort((a, b) => a.totalStreams - b.totalStreams).slice(0, 10);
+    let top10 = genreData.sort((a, b) => b.totalStreams - a.totalStreams).slice(0, 30);
+    let reversed_top10 = top10.sort((a, b) => a.totalStreams - b.totalStreams).slice(0, 30);
 
     const container = d3.select(`#${this.chartId}`);
     const containerRect = container.node().getBoundingClientRect();
@@ -49,19 +49,13 @@ export class GenreAnalysis extends BaseChart {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleBand()
+    const x = d3.scaleLinear()
       .range([0, width])
-      .domain(top10.map(d => d.genre))
-      .padding(0.1);
+      .domain([0, d3.max(top10, d => d.artistCount)])
 
     svg.append("g")
       .attr("transform", `translate(${0},${height})`)
-      .call(d3.axisBottom(x))
-      .selectAll("text")
-          .style("text-anchor", "end")
-          .attr("dx", "-.8em")
-          .attr("dy", ".15em")
-          .attr("transform", "rotate(-65)");
+      .call(d3.axisBottom(x));
 
     // X-axis label
     svg.append("text")
@@ -95,27 +89,29 @@ export class GenreAnalysis extends BaseChart {
       .domain([0, d3.max(top10, d => d.artistCount)])
       .range([5, 30]);
       
-    svg.selectAll('.bubble')
+      svg.selectAll('.bubble')
       .data(reversed_top10)
       .enter().append('circle')
       .attr('class', 'bubble')
-      .attr('cx', d => x(d.genre) + x.bandwidth() / 2)
+      .attr('cx', d => x(d.artistCount))
       .attr('cy', d => y(d.totalStreams))
-      .attr('r', d => z(d.artistCount))
+      .attr('r', 8)
       .style('fill', '#4c51bf')
       .style('opacity', '0.7')
       .on('mouseover', (event, d) => {
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', .9);
-        tooltip.html(`Genre: ${d.genre}<br/>Total Streams: ${d.totalStreams}<br/>Artist Count: ${d.artistCount}`)
-          .style('left', (event.pageX) + 'px')
-          .style('top', (event.pageY - 28) + 'px');
+        console.log(d.genre)
+        svg.append("text")
+          .attr('class', 'label')
+          .text(d.genre)
+          .attr("x", x(d.artistCount)) 
+          .attr("y", y(d.totalStreams) - 10) 
+          .attr("text-anchor", "middle") 
+          .style('fill', 'white') 
+          .style('font-size', '14px')
+          .style('pointer-events', 'none');
       })
       .on('mouseout', () => {
-        tooltip.transition()
-          .duration(500)
-          .style('opacity', 0);
+        svg.select('.label').remove();
       });
   }
 }
