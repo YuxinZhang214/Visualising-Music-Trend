@@ -79,11 +79,11 @@ export class GenreAnalysis extends BaseChart {
     svg.append("text")
       .attr("text-anchor", "end")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0)
-      .attr("x", -margin.top - height/2 )
+      .attr("y", -margin.left + 20)
+      .attr("x", - height/2 + 50 )
       .text("Streams")
       .style("fill", 'white')
-      .style("font-size", "20px");
+      .style("font-size", "20px"); 
     
     const z = d3.scaleSqrt()
       .domain([0, d3.max(top10, d => d.artistCount)])

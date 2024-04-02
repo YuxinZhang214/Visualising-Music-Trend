@@ -61,7 +61,7 @@ export class TopArtistsChart extends BaseChart {
     const x = d3.scaleBand()
       .domain(sortedArtists.map(d => d.artist)) // Use artist names for domain
       .rangeRound([0, width])
-      .padding(0.1);
+      .padding(0.2);
   
     const y = d3.scaleLinear()
       .domain([0, d3.max(sortedArtists, d => d.streams)])
@@ -80,26 +80,16 @@ export class TopArtistsChart extends BaseChart {
     // X-axis label
     svg.append("text")
       .attr("text-anchor", "end")
-      .attr("x", width)
+      .attr("x", width/2)
       .attr("y", height + margin.bottom - 5)
       .text("Artists")
       .style("fill", 'white')
-      .style("font-size", "16px");
+      .style("font-size", "20px");
   
     // Add the y-axis to the chart
     svg.append("g")
-      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")));
+      .call(d3.axisLeft(y).tickFormat(d3.format(".2s")));
   
-    // Y-axis label
-    svg.append("text")
-      .attr("text-anchor", "end")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -margin.left + 20)
-      .attr("x", -margin.top)
-      .text("Streams")
-      .style("fill", 'white')
-      .style("font-size", "16px");
-
     // Draw the bars
     svg.selectAll(".bar")
       .data(sortedArtists)
@@ -135,7 +125,7 @@ export class TopArtistsChart extends BaseChart {
 
      // Legend (example for one legend item)
     const legend = svg.append("g")
-     .attr("transform", `translate(${width - 100},${20})`); // Adjust position as needed
+     .attr("transform", `translate(${width - 120},${-30})`); // Adjust position as needed
 
     legend.append("rect")
       .attr("width", 18)
@@ -147,7 +137,7 @@ export class TopArtistsChart extends BaseChart {
       .attr("y", 9)
       .attr("dy", "0.35em")
       .style("text-anchor", "start")
-      .text("Label") // Replace with actual label
+      .text("Total Stream") // Replace with actual label
       .style("font-size", "14px") // Adjust font size as needed
       .style("fill", 'white');
   }

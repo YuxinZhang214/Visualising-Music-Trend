@@ -17,7 +17,7 @@ export class TopTracksChart extends BaseChart {
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
   
-    const margin = { top: 30, right: 100, bottom: 100, left: 80 };
+    const margin = { top: 30, right: 50, bottom: 100, left: 80 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
@@ -30,7 +30,7 @@ export class TopTracksChart extends BaseChart {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-      // Set up the x scale
+    // Set up the x scale
     const x = d3.scaleBand()
       .range([0, width])
       .domain(sortedTracks.map(d => d[0]))
@@ -45,8 +45,9 @@ export class TopTracksChart extends BaseChart {
 
     svg.append('text')
       .attr('text-anchor', 'end')
-      .attr('x', width / 2 + margin.left)
-      .attr('y', height + margin.top + 20)
+      .attr('x', width / 2)
+      .attr('y', height + margin.top + 50)
+      .style("fill", 'white')
       .text('Songs');
 
     // Add Y axis
@@ -56,6 +57,16 @@ export class TopTracksChart extends BaseChart {
     
     svg.append('g')
       .call(d3.axisLeft(y).tickFormat(d3.format(".1s")));
+
+    // Y-axis label
+    svg.append("text")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)")
+      .attr("y", -margin.left + 10)
+      .attr("x", - height/2 + 50 )
+      .text("Streams")
+      .style("fill", 'white')
+      .style("font-size", "20px"); 
   
     svg.selectAll(".bar")
       .data(sortedTracks)
@@ -67,7 +78,7 @@ export class TopTracksChart extends BaseChart {
       .attr('fill', '#4c51bf'); 
 
     const legend = svg.append("g")
-    .attr("transform", `translate(${width - 100},-30)`);
+      .attr("transform", `translate(${width - 120},-30)`);
 
     legend.append("rect")
       .attr("width", 18)
@@ -79,7 +90,7 @@ export class TopTracksChart extends BaseChart {
       .attr("y", 9)
       .attr("dy", "0.35em")
       .style("text-anchor", "start")
-      .text("Label") // TODO: Replace with actual label
+      .text("Total Stream") // TODO: Replace with actual label
       .style("font-size", "14px") // Adjust font size as needed
       .style("fill", 'white');
 

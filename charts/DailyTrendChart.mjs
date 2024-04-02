@@ -45,7 +45,7 @@ export class DailyTrendChart extends BaseChart{
     // X-axis label
     svg.append("text")
       .attr("text-anchor", "end")
-      .attr("x", width / 2 + margin.left)
+      .attr("x", width / 2)
       .attr("y", height + margin.top)
       .text("Date")
       .style("fill", 'white')
@@ -61,7 +61,7 @@ export class DailyTrendChart extends BaseChart{
       .attr("text-anchor", "end")
       .attr("transform", "rotate(-90)")
       .attr("y", -margin.left + 20)
-      .attr("x", -margin.top - height/2 )
+      .attr("x", - height/2 + 50 )
       .text("Streams")
       .style("fill", 'white')
       .style("font-size", "20px"); 
