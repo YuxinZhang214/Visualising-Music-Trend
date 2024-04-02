@@ -21,6 +21,16 @@ export class TopTracksChart extends BaseChart {
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("background", "#fff")
+      .style("border", "1px solid #000")
+      .style("padding", "5px")
+      .style("color", "black");
+
     container.select('svg').remove();
 
     const svg = container
@@ -75,7 +85,22 @@ export class TopTracksChart extends BaseChart {
       .attr('y', d => y(d[1])) // Use stream sum for y position
       .attr('width', x.bandwidth())
       .attr("height", d => height - y(d[1])) // Use stream sum for height
-      .attr('fill', '#4c51bf'); 
+      .attr('fill', '#4c51bf')
+      .on('mouseover', function(event, d) {
+        tooltip.style("visibility", "visible")
+            .text(`Exact Streams Values: ${d[1]}`)
+            .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        d3.select(this)
+          .attr('fill', '#ffab00');
+      })
+      .on('mousemove', function(event) {
+        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+      })
+      .on('mouseout', function(event, d) {
+        tooltip.style("visibility", "hidden");
+        d3.select(this)
+          .attr('fill', '#4c51bf'); 
+      })
 
     const legend = svg.append("g")
       .attr("transform", `translate(${width - 120},-30)`);

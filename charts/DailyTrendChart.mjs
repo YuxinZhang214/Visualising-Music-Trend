@@ -80,9 +80,21 @@ export class DailyTrendChart extends BaseChart{
       .attr("width", barWidth)
       .attr("height", d => height - margin.bottom - y(d.streams))
       .attr("fill",  "#4c51bf")
-      .on("click", d => {
-        // window.location.href = `/song-details-page?date=${d.date.toISOString()}&country=${encodeURIComponent(d.country_fullname)}`;
-    })
+      .on('mouseover', function(event, d) {
+        tooltip.style("visibility", "visible")
+            .text(`Exact Streams Values: ${d.streams}`)
+            .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        d3.select(this)
+          .attr('fill', '#ffab00');
+      })
+      .on('mousemove', function(event) {
+        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+      })
+      .on('mouseout', function(event, d) {
+        tooltip.style("visibility", "hidden");
+        d3.select(this)
+          .attr('fill', '#4c51bf'); 
+      })
 
      // Legend (example for one legend item)
      const legend = svg.append("g")

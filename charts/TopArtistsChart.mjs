@@ -47,7 +47,6 @@ export class TopArtistsChart extends BaseChart {
       .style("padding", "5px")
       .style("color", "black");
    
-  
     container.select('svg').remove();
   
     const svg = container
