@@ -17,7 +17,7 @@ export class TopTracksChart extends BaseChart {
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
   
-    const margin = { top: 30, right: 50, bottom: 50, left: 100 };
+    const margin = { top: 30, right: 100, bottom: 100, left: 80 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
@@ -30,61 +30,41 @@ export class TopTracksChart extends BaseChart {
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // Set up the x scale
-    const x = d3.scaleLinear()
-    .domain([0, d3.max(sortedTracks, d => d[1])])
-    .range([0, width]);
+      // Set up the x scale
+    const x = d3.scaleBand()
+      .range([0, width])
+      .domain(sortedTracks.map(d => d[0]))
+      .padding(0.2);
+    
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll('text')
+        .attr('transform', 'translate(-10,0)rotate(-45)')
+        .style('text-anchor', 'end');
 
-    const y = d3.scaleBand()
-    .domain(sortedTracks.map(d => d[0]))
-    .rangeRound([0, height])
-    .paddingInner(0.1);
+    svg.append('text')
+      .attr('text-anchor', 'end')
+      .attr('x', width / 2 + margin.left)
+      .attr('y', height + margin.top + 20)
+      .text('Songs');
 
-    const formatNumber = d3.format(".1s");
+    // Add Y axis
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(sortedTracks, d => d[1])])
+      .range([height, 0]);
+    
+    svg.append('g')
+      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")));
   
-    // Add the x-axis to the chart
-    svg.append("g")
-      .attr("transform", `translate(0,${height})`)
-      .call(d3.axisBottom(x).tickFormat(formatNumber));
-
-    // X-axis label
-    svg.append("text")
-      .attr("text-anchor", "end")
-      .attr("x", width / 2.5 + margin.left)
-      .attr("y", height + margin.top + 10)
-      .text("Streams")
-      .style("fill", 'white')
-      .style("font-size", "20px")
-  
-    // Add the y-axis to the chart
-    svg.append("g")
-      //.attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y));
-
-    // Y-axis label
-    svg.append("text")
-      .attr("text-anchor", "end")
-      .attr("transform", "rotate(-90)")
-      .attr("y", -margin.left + 20)
-      .attr("x", -margin.top - height/2.5 )
-      .text("Top Track")
-      .style("fill", 'white')
-      .style("font-size", "20px"); 
-
-    const barWidth = Math.max((width - margin.left - margin.right) / data.length - 1, 1);
-
-    console.log(barWidth, data.length)
-  
-    // Draw the bars for the bar chart
     svg.selectAll(".bar")
       .data(sortedTracks)
       .enter().append('rect')
-      .attr('class', 'bar')
-      .attr('x', 0)
-      .attr('y', d => y(d[0]))
-      .attr('width', d => x(d[1]))
-      .attr('height', y.bandwidth())
-      .attr('fill', '#4c51bf');
+      .attr('x', d => x(d[0])) // Use track name for x position
+      .attr('y', d => y(d[1])) // Use stream sum for y position
+      .attr('width', x.bandwidth())
+      .attr("height", d => height - y(d[1])) // Use stream sum for height
+      .attr('fill', '#4c51bf'); 
 
     const legend = svg.append("g")
     .attr("transform", `translate(${width - 100},-30)`);

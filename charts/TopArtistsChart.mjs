@@ -33,7 +33,7 @@ export class TopArtistsChart extends BaseChart {
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
   
-    const margin = { top: 30, right: 50, bottom: 100, left: 100 }; 
+    const margin = { top: 30, right: 100, bottom: 100, left: 50 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
   
@@ -77,7 +77,7 @@ export class TopArtistsChart extends BaseChart {
   
     // Add the y-axis to the chart
     svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")));
   
     // Y-axis label
     svg.append("text")

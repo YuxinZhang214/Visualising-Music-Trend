@@ -9,8 +9,10 @@ export class ChartController {
       const rawData = await d3.csv(this.datasetPath);
       this.rawData = rawData.map(d => {
         let artists = [];
+        let genres = [];
         try {
           artists = JSON.parse(d.artists.replace(/'/g, '"'));
+          genres = JSON.parse(d.artist_genres.replace(/'/g, '"'));
         } catch (e) {
           console.error('Failed to parse artists', d.artists);
         }
@@ -19,13 +21,14 @@ export class ChartController {
           ...d,
           date: new Date(d.date),
           streams: +d.streams,
-          artists: artists
+          artists: artists,
+          genres: genres
         };
       });
       this.years = Array.from(new Set(this.rawData.map(d => d.date.getFullYear()))).sort((a, b) => a - b);
       this.countries = Array.from(new Set(this.rawData.map(d => d.country_fullname))).sort();
 
-      this.initializeDropdowns(); // Corrected call
+      this.initializeDropdowns(); 
     }
 
     initializeDropdowns() {

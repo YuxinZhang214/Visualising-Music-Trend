@@ -14,7 +14,7 @@ export class DailyTrendChart extends BaseChart{
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
   
-    const margin = { top: 30, right: 50, bottom: 50, left: 50 };
+    const margin = { top: 30, right: 100, bottom: 50, left: 100 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
@@ -30,7 +30,7 @@ export class DailyTrendChart extends BaseChart{
     // Set up the x scale
     const x = d3.scaleTime()
       .domain(d3.extent(data, d => d.date)) // Use the extent of the date data as the domain
-      .range([margin.left, width - margin.right]);
+      .range([0, width]);
   
     // Set up the y scale
     const y = d3.scaleLinear()
@@ -53,8 +53,8 @@ export class DailyTrendChart extends BaseChart{
   
     // Add the y-axis to the chart
     svg.append("g")
-      .attr("transform", `translate(${margin.left},0)`)
-      .call(d3.axisLeft(y));
+      .attr("transform", `translate(${0},0)`)
+      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")));
 
     // Y-axis label
     svg.append("text")
