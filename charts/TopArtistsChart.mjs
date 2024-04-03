@@ -64,13 +64,14 @@ export class TopArtistsChart extends BaseChart {
   
     const y = d3.scaleLinear()
       .domain([0, d3.max(sortedArtists, d => d.streams)])
-      .range([height, 0]);
+      .range([height-margin.bottom, 0]);
   
     // Add the x-axis to the chart
     svg.append("g")
-      .attr("transform", `translate(0,${height})`)
+      .attr("transform", `translate(0,${height-margin.bottom})`)
       .call(d3.axisBottom(x))
       .selectAll("text")
+      .style("font-size", "16px")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
         .attr("dy", ".15em")
@@ -80,14 +81,15 @@ export class TopArtistsChart extends BaseChart {
     svg.append("text")
       .attr("text-anchor", "end")
       .attr("x", width/2)
-      .attr("y", height + margin.bottom - 5)
+      .attr("y", height + 30)
       .text("Artists")
       .style("fill", 'white')
       .style("font-size", "20px");
   
     // Add the y-axis to the chart
     svg.append("g")
-      .call(d3.axisLeft(y).tickFormat(d3.format(".2s")));
+      .call(d3.axisLeft(y).tickFormat(d3.format(".2s")))
+      .style("font-size", "16px")
   
     // Draw the bars
     svg.selectAll(".bar")
@@ -97,9 +99,10 @@ export class TopArtistsChart extends BaseChart {
       .attr("x", d => x(d.artist))
       .attr("width", x.bandwidth())
       .attr("y", d => y(d.streams))
-      .attr("height", d => height - y(d.streams))
+      .attr("height", d => height-margin.bottom - y(d.streams))
       .attr("fill", "#4c51bf")
       .on('mouseover', function(event, d) {
+          
         tooltip.style("visibility", "visible")
             .text(`Exact Streams Values: ${d.streams}`)
             .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");

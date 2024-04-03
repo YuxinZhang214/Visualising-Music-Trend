@@ -20,6 +20,16 @@ export class DailyTrendChart extends BaseChart{
 
     container.select('svg').remove();
 
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("z-index", "10")
+      .style("visibility", "hidden")
+      .style("background", "#fff")
+      .style("border", "1px solid #000")
+      .style("padding", "5px")
+      .style("color", "black");
+
     const svg = container
       .append('svg')
       .attr('width', width + margin.left + margin.right)

@@ -17,7 +17,7 @@ export class TopTracksChart extends BaseChart {
     const containerWidth = containerRect.width;
     const containerHeight = containerRect.height;
   
-    const margin = { top: 30, right: 50, bottom: 100, left: 80 };
+    const margin = { top: 30, right: 50, bottom: 100, left: 100 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
@@ -47,32 +47,34 @@ export class TopTracksChart extends BaseChart {
       .padding(0.2);
     
     svg.append('g')
-      .attr('transform', `translate(0,${height})`)
+      .attr('transform', `translate(0,${height-margin.bottom})`)
       .call(d3.axisBottom(x))
       .selectAll('text')
+      .style("font-size", "16px")
         .attr('transform', 'translate(-10,0)rotate(-45)')
         .style('text-anchor', 'end');
 
     svg.append('text')
       .attr('text-anchor', 'end')
       .attr('x', width / 2)
-      .attr('y', height + margin.top + 50)
+      .attr("y", height + 20)
       .style("fill", 'white')
       .text('Songs');
 
     // Add Y axis
     const y = d3.scaleLinear()
       .domain([0, d3.max(sortedTracks, d => d[1])])
-      .range([height, 0]);
+      .range([height-margin.bottom, 0]);
     
     svg.append('g')
-      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")));
+      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")))
+      .style("font-size", "16px")
 
     // Y-axis label
     svg.append("text")
       .attr("text-anchor", "end")
       .attr("transform", "rotate(-90)")
-      .attr("y", -margin.left + 10)
+      .attr("y", - margin.left + 20)
       .attr("x", - height/2 + 50 )
       .text("Streams")
       .style("fill", 'white')
@@ -84,7 +86,7 @@ export class TopTracksChart extends BaseChart {
       .attr('x', d => x(d[0])) // Use track name for x position
       .attr('y', d => y(d[1])) // Use stream sum for y position
       .attr('width', x.bandwidth())
-      .attr("height", d => height - y(d[1])) // Use stream sum for height
+      .attr("height", d => height-margin.bottom - y(d[1])) // Use stream sum for height
       .attr('fill', '#4c51bf')
       .on('mouseover', function(event, d) {
         tooltip.style("visibility", "visible")
