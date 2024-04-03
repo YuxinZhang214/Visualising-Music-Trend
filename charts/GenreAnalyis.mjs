@@ -32,7 +32,7 @@ export class GenreAnalysis extends BaseChart {
     const container = d3.select(`#${this.chartId}`);
     const containerRect = container.node().getBoundingClientRect();
     const containerWidth = containerRect.width;
-    const containerHeight = containerRect.height*0.88;
+    const containerHeight = containerRect.height*0.75;
   
     const margin = { top: 30, right: 150, bottom: 50, left: 100 };
     const width = containerWidth - margin.left - margin.right;

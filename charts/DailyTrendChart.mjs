@@ -119,9 +119,6 @@ export class DailyTrendChart extends BaseChart{
       .attr("width", barWidth)
       .attr("height", d => height - margin.bottom - y(d.streams))
       .attr("fill",  "#4c51bf")
-      .transition() // Apply transition
-      .duration(800) // Set duration for the animation
-      .delay((d, i) => i * 50)
       .on('mouseover', function(event, d) {
         const formattedDate = d3.timeFormat("%B %d, %Y")(d.date); // Format the date
         tooltip.html(`Day: ${formattedDate}<br/>Streams: ${d.streams.toLocaleString()}`) // Show both day and streams
