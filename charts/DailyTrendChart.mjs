@@ -9,6 +9,11 @@ export class DailyTrendChart extends BaseChart{
 
   drawChart(data) {
 
+    const aggregatedData = Array.from(d3.rollup(data, 
+      v => d3.sum(v, d => d.streams), 
+      d => d.date
+    )).map(([date, streams]) => ({ date, streams }));
+
     const container = d3.select(`#${this.chartId}`);
     const containerRect = container.node().getBoundingClientRect();
     const containerWidth = containerRect.width;
@@ -38,13 +43,19 @@ export class DailyTrendChart extends BaseChart{
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Set up the x scale
+    const dateExtent = d3.extent(aggregatedData, d => d.date);
+
+    // Extend the maximum date by a certain number of days, e.g., 10 days
+    const maxDateExtended = d3.timeDay.offset(dateExtent[1], 10); // Adjust the 10 to however many days you want to add
+    
+    // Now, use these dates to set your domain
     const x = d3.scaleTime()
-      .domain(d3.extent(data, d => d.date)) // Use the extent of the date data as the domain
-      .range([0, width]);
+          .domain([dateExtent[0], maxDateExtended]) // Use the extended maximum date
+          .range([0, width]);
   
     // Set up the y scale
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.streams)*1.1]) // Use the max value of streams as the domain
+      .domain([0, d3.max(aggregatedData, d => d.streams)*1.1]) // Use the max value of streams as the domain
       .range([height - margin.bottom, margin.top]);
   
     // Add the x-axis to the chart
@@ -96,13 +107,11 @@ export class DailyTrendChart extends BaseChart{
       .style("stroke", 'white')
       .style("opacity", 0.3);
 
-    const barWidth = Math.max((width - margin.left - margin.right) / data.length - 1, 1);
-
-    console.log(barWidth, data.length)
+    const barWidth = Math.max((width - margin.left - margin.right) / aggregatedData.length - 1, 1);
   
     // Draw the bars for the bar chart
     svg.selectAll(".bar")
-      .data(data)
+      .data(aggregatedData)
       .join("rect")
       .attr("class", "bar")
       .attr("x", d => x(d.date))
@@ -110,6 +119,9 @@ export class DailyTrendChart extends BaseChart{
       .attr("width", barWidth)
       .attr("height", d => height - margin.bottom - y(d.streams))
       .attr("fill",  "#4c51bf")
+      .transition() // Apply transition
+      .duration(800) // Set duration for the animation
+      .delay((d, i) => i * 50)
       .on('mouseover', function(event, d) {
         const formattedDate = d3.timeFormat("%B %d, %Y")(d.date); // Format the date
         tooltip.html(`Day: ${formattedDate}<br/>Streams: ${d.streams.toLocaleString()}`) // Show both day and streams

@@ -105,7 +105,7 @@ export class GenreAnalysis extends BaseChart {
 
     // Draw dashed lines for each y tick
     svg.selectAll("line.y")
-      .data(y.ticks(10)) // Adjust the number of ticks if necessary
+      .data(y.ticks(10).slice(0, -1)) // Adjust the number of ticks if necessary
       .enter().append("line")
       .attr("class", "y")
       .attr("x1", 0)
@@ -118,7 +118,7 @@ export class GenreAnalysis extends BaseChart {
     
     // For x-axis dashed lines
     svg.selectAll("line.x")
-      .data(x.ticks()) // Use the updated x scale's internal tick generator
+      .data(x.ticks().slice(0, -1)) // Use the updated x scale's internal tick generator
       .enter().append("line")
       .attr("class", "x")
       .attr("y1", y(0)) // Updated to use the y scale to place at the bottom of the chart
