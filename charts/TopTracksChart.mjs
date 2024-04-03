@@ -21,6 +21,8 @@ export class TopTracksChart extends BaseChart {
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
 
+    container.select('svg').remove();
+
     const tooltip = d3.select("body").append("div")
       .attr("class", "tooltip")
       .style("position", "absolute")
@@ -30,8 +32,6 @@ export class TopTracksChart extends BaseChart {
       .style("border", "1px solid #000")
       .style("padding", "5px")
       .style("color", "black");
-
-    container.select('svg').remove();
 
     const svg = container
       .append('svg')
@@ -79,6 +79,19 @@ export class TopTracksChart extends BaseChart {
       .text("Streams")
       .style("fill", 'white')
       .style("font-size", "20px"); 
+
+    const yAxisDashedLines = svg.append("g")
+      .selectAll("line")
+      .data(y.ticks()) // Use the y scale's internal tick generator to create lines at each tick
+      .enter().append("line")
+      .attr("class", "y-dashed-line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", d => y(d))
+      .attr("y2", d => y(d))
+      .style("stroke", "#ccc") // Use a lighter color for dashed lines
+      .style("stroke-dasharray", "3,3") // Dashed pattern: 3px stroke, 3px space
+      .style("opacity", 0.7); // Slightly transparent dashed lines for a sub
   
     svg.selectAll(".bar")
       .data(sortedTracks)
@@ -89,20 +102,36 @@ export class TopTracksChart extends BaseChart {
       .attr("height", d => height-margin.bottom - y(d[1])) // Use stream sum for height
       .attr('fill', '#4c51bf')
       .on('mouseover', function(event, d) {
-        tooltip.style("visibility", "visible")
-            .text(`Exact Streams Values: ${d[1]}`)
-            .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        // Scale up the bar
         d3.select(this)
+          .transition()
+          .duration(200)
+          .attr("y", y(d[1]) - 10) // Move bar up by 10px, using the correct data reference
+          .attr("height", height - margin.bottom - y(d[1]) + 10) // Increase bar height by 10px, corrected
           .attr('fill', '#ffab00');
+      
+        // Display detailed information in tooltip
+          tooltip.html(`Track: ${d[0]}<br/>Total Streams: ${d[1].toLocaleString()}`) // Using toLocaleString for better number formatting
+            .style("visibility", "visible")
+            .style("left", `${event.pageX + 10}px`)
+            .style("top", `${event.pageY - 10}px`);
       })
       .on('mousemove', function(event) {
-        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        tooltip.style("left", `${event.pageX + 10}px`)
+          .style("top", `${event.pageY - 10}px`);
       })
-      .on('mouseout', function(event, d) {
-        tooltip.style("visibility", "hidden");
+      .on('mouseout', function() {
+        // Scale down the bar to its original size
         d3.select(this)
-          .attr('fill', '#4c51bf'); 
-      })
+          .transition()
+          .duration(200)
+          .attr('y', d => y(d[1])) // Use stream sum for y position
+          .attr("height", d => height-margin.bottom - y(d[1]))
+          .attr('fill', '#4c51bf');
+      
+        // Hide tooltip
+        tooltip.style("visibility", "hidden");
+      });
 
     const legend = svg.append("g")
       .attr("transform", `translate(${width - 120},-30)`);
@@ -117,8 +146,8 @@ export class TopTracksChart extends BaseChart {
       .attr("y", 9)
       .attr("dy", "0.35em")
       .style("text-anchor", "start")
-      .text("Total Stream") // TODO: Replace with actual label
-      .style("font-size", "14px") // Adjust font size as needed
+      .text("Stream Count") 
+      .style("font-size", "14px") 
       .style("fill", 'white');
 
   }

@@ -36,6 +36,8 @@ export class TopArtistsChart extends BaseChart {
     const margin = { top: 30, right: 100, bottom: 100, left: 50 };
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
+   
+    container.select('svg').remove();
 
     const tooltip = d3.select("body").append("div")
       .attr("class", "tooltip")
@@ -46,8 +48,6 @@ export class TopArtistsChart extends BaseChart {
       .style("border", "1px solid #000")
       .style("padding", "5px")
       .style("color", "black");
-   
-    container.select('svg').remove();
   
     const svg = container
       .append('svg')
@@ -90,6 +90,19 @@ export class TopArtistsChart extends BaseChart {
     svg.append("g")
       .call(d3.axisLeft(y).tickFormat(d3.format(".2s")))
       .style("font-size", "16px")
+
+    const yAxisDashedLines = svg.append("g")
+      .selectAll("line")
+      .data(y.ticks()) // Use the y scale's internal tick generator to create lines at each tick
+      .enter().append("line")
+      .attr("class", "y-dashed-line")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", d => y(d))
+      .attr("y2", d => y(d))
+      .style("stroke", "#ccc") // Use a lighter color for dashed lines
+      .style("stroke-dasharray", "3,3") // Dashed pattern: 3px stroke, 3px space
+      .style("opacity", 0.7); // Slightly transparent dashed lines for a sub
   
     // Draw the bars
     svg.selectAll(".bar")
@@ -103,19 +116,35 @@ export class TopArtistsChart extends BaseChart {
       .attr("fill", "#4c51bf")
       .on('mouseover', function(event, d) {
           
-        tooltip.style("visibility", "visible")
-            .text(`Exact Streams Values: ${d.streams}`)
-            .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        // Scale up the bar
         d3.select(this)
-          .attr('fill', '#ffab00');
+        .transition()
+        .duration(200)
+        .attr("y", y(d.streams) - 10) // Move bar up by 10px
+        .attr("height", d => height - margin.bottom - y(d.streams) + 10) // Increase bar height by 10px
+        .attr('fill', '#ffab00');
+      
+        // Display detailed information in tooltip
+        tooltip.html(`Artist: ${d.artist}<br/>Total Streams: ${d.streams.toLocaleString()}`)
+          .style("visibility", "visible")
+          .style("top", (event.pageY - 10) + "px")
+          .style("left", (event.pageX + 10) + "px");
       })
       .on('mousemove', function(event) {
-        tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        tooltip.style("top", (event.pageY - 10) + "px")
+          .style("left", (event.pageX + 10) + "px");
       })
       .on('mouseout', function(event, d) {
-        tooltip.style("visibility", "hidden");
+        // Scale down the bar to its original size
         d3.select(this)
-          .attr('fill', '#4c51bf'); 
+        .transition()
+        .duration(200)
+        .attr("y", d => y(d.streams))
+        .attr("height", d => height - margin.bottom - y(d.streams))
+        .attr('fill', '#4c51bf');
+      
+        // Hide tooltip
+        tooltip.style("visibility", "hidden");
       })
       .on('click', (event, d) => {
         // Construct a URL for the artist's Wikipedia page
@@ -139,8 +168,10 @@ export class TopArtistsChart extends BaseChart {
       .attr("y", 9)
       .attr("dy", "0.35em")
       .style("text-anchor", "start")
-      .text("Total Stream") // Replace with actual label
+      .text("Stream Count") 
       .style("font-size", "14px") // Adjust font size as needed
       .style("fill", 'white');
+
+   
   }
 }

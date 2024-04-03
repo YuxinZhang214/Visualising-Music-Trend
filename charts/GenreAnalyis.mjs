@@ -100,6 +100,56 @@ export class GenreAnalysis extends BaseChart {
     const z = d3.scaleSqrt()
       .domain([0, d3.max(top10, d => d.artistCount)])
       .range([5, 40]);
+
+    const dashArray = "2, 5";
+
+    // Draw dashed lines for each y tick
+    svg.selectAll("line.y")
+      .data(y.ticks(10)) // Adjust the number of ticks if necessary
+      .enter().append("line")
+      .attr("class", "y")
+      .attr("x1", 0)
+      .attr("x2", width)
+      .attr("y1", d => y(d))
+      .attr("y2", d => y(d))
+      .style("stroke", "#ccc")
+      .style("stroke-dasharray", dashArray)
+      .style("shape-rendering", "crispEdges");
+    
+    // For x-axis dashed lines
+    svg.selectAll("line.x")
+      .data(x.ticks()) // Use the updated x scale's internal tick generator
+      .enter().append("line")
+      .attr("class", "x")
+      .attr("y1", y(0)) // Updated to use the y scale to place at the bottom of the chart
+      .attr("y2", y(d3.max(top10, d => d.totalStreams)*1.2)) // The top of the chart
+      .attr("x1", d => x(d))
+      .attr("x2", d => x(d))
+      .style("stroke", "#ddd")
+      .style("stroke-dasharray", dashArray)
+      .style("shape-rendering", "crispEdges");
+    
+    // Dashed line at the top
+    svg.append("line")
+      .attr("class", "top-dashed-line")
+      .attr("x1", 0)
+      .attr("y1", y(d3.max(top10, d => d.totalStreams)*1.2)) // Top of y-axis scale
+      .attr("x2", width)
+      .attr("y2", y(d3.max(top10, d => d.totalStreams)*1.2)) // Consistent with y1
+      .style("stroke", "#ddd")
+      .style("stroke-dasharray", dashArray)
+      .style("shape-rendering", "crispEdges");
+    
+    // Dashed line at the right
+    svg.append("line")
+      .attr("class", "right-dashed-line")
+      .attr("x1", x(d3.max(top10, d => d.artistCount)*1.1)) // Right of x-axis scale
+      .attr("y1", 0)
+      .attr("x2", x(d3.max(top10, d => d.artistCount)*1.1)) // Consistent with x1
+      .attr("y2", height)
+      .style("stroke", "#ddd")
+      .style("stroke-dasharray", dashArray)
+      .style("shape-rendering", "crispEdges");
       
     const bubbles = svg.selectAll('.bubble')
       .data(reversed_top10)
@@ -144,55 +194,5 @@ export class GenreAnalysis extends BaseChart {
         .end()
         .then(() => tooltip.style("display", "none")); 
     });
-
-    const dashArray = "2, 5";
-
-  // Draw dashed lines for each y tick
-  svg.selectAll("line.y")
-    .data(y.ticks(10)) // Adjust the number of ticks if necessary
-    .enter().append("line")
-    .attr("class", "y")
-    .attr("x1", 0)
-    .attr("x2", width)
-    .attr("y1", d => y(d))
-    .attr("y2", d => y(d))
-    .style("stroke", "#ccc")
-    .style("stroke-dasharray", dashArray)
-    .style("shape-rendering", "crispEdges");
-  
-  // For x-axis dashed lines
-  svg.selectAll("line.x")
-    .data(x.ticks()) // Use the updated x scale's internal tick generator
-    .enter().append("line")
-    .attr("class", "x")
-    .attr("y1", y(0)) // Updated to use the y scale to place at the bottom of the chart
-    .attr("y2", y(d3.max(top10, d => d.totalStreams)*1.2)) // The top of the chart
-    .attr("x1", d => x(d))
-    .attr("x2", d => x(d))
-    .style("stroke", "#ddd")
-    .style("stroke-dasharray", dashArray)
-    .style("shape-rendering", "crispEdges");
-  
-  // Dashed line at the top
-  svg.append("line")
-    .attr("class", "top-dashed-line")
-    .attr("x1", 0)
-    .attr("y1", y(d3.max(top10, d => d.totalStreams)*1.2)) // Top of y-axis scale
-    .attr("x2", width)
-    .attr("y2", y(d3.max(top10, d => d.totalStreams)*1.2)) // Consistent with y1
-    .style("stroke", "#ddd")
-    .style("stroke-dasharray", dashArray)
-    .style("shape-rendering", "crispEdges");
-  
-  // Dashed line at the right
-  svg.append("line")
-    .attr("class", "right-dashed-line")
-    .attr("x1", x(d3.max(top10, d => d.artistCount)*1.1)) // Right of x-axis scale
-    .attr("y1", 0)
-    .attr("x2", x(d3.max(top10, d => d.artistCount)*1.1)) // Consistent with x1
-    .attr("y2", height)
-    .style("stroke", "#ddd")
-    .style("stroke-dasharray", dashArray)
-    .style("shape-rendering", "crispEdges");
   }  
 }
