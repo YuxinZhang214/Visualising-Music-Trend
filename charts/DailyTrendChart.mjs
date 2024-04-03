@@ -12,7 +12,7 @@ export class DailyTrendChart extends BaseChart{
     const container = d3.select(`#${this.chartId}`);
     const containerRect = container.node().getBoundingClientRect();
     const containerWidth = containerRect.width;
-    const containerHeight = containerRect.height;
+    const containerHeight = containerRect.height*0.9;
   
     const margin = { top: 30, right: 100, bottom: 50, left: 100 };
     const width = containerWidth - margin.left - margin.right;
@@ -44,27 +44,29 @@ export class DailyTrendChart extends BaseChart{
   
     // Set up the y scale
     const y = d3.scaleLinear()
-      .domain([0, d3.max(data, d => d.streams)]) // Use the max value of streams as the domain
+      .domain([0, d3.max(data, d => d.streams)*1.1]) // Use the max value of streams as the domain
       .range([height - margin.bottom, margin.top]);
   
     // Add the x-axis to the chart
     svg.append("g")
       .attr("transform", `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x))
+      .style("font-size", "16px")
 
     // X-axis label
     svg.append("text")
       .attr("text-anchor", "end")
       .attr("x", width / 2)
       .attr("y", height + margin.top)
-      .text("Date")
+      .text("Day")
       .style("fill", 'white')
       .style("font-size", "20px")
   
     // Add the y-axis to the chart
     svg.append("g")
       .attr("transform", `translate(${0},0)`)
-      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")));
+      .call(d3.axisLeft(y).tickFormat(d3.format(".1s")))
+      .style("font-size", "16px")
 
     // Y-axis label
     svg.append("text")
@@ -75,6 +77,24 @@ export class DailyTrendChart extends BaseChart{
       .text("Streams")
       .style("fill", 'white')
       .style("font-size", "20px"); 
+
+    svg.append("line")
+      .attr("class", "top-border")
+      .attr("x1", x.range()[0])
+      .attr("y1", y.range()[1])
+      .attr("x2", x.range()[1])
+      .attr("y2", y.range()[1])
+      .style("stroke", 'white')
+      .style("opacity", 0.3);
+
+    svg.append("line")
+      .attr("class", "right-border")
+      .attr("x1", x.range()[1])
+      .attr("y1", y.range()[1])
+      .attr("x2", x.range()[1])
+      .attr("y2", y.range()[0])
+      .style("stroke", 'white')
+      .style("opacity", 0.3);
 
     const barWidth = Math.max((width - margin.left - margin.right) / data.length - 1, 1);
 
@@ -91,11 +111,13 @@ export class DailyTrendChart extends BaseChart{
       .attr("height", d => height - margin.bottom - y(d.streams))
       .attr("fill",  "#4c51bf")
       .on('mouseover', function(event, d) {
-        tooltip.style("visibility", "visible")
-            .text(`Exact Streams Values: ${d.streams}`)
-            .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        const formattedDate = d3.timeFormat("%B %d, %Y")(d.date); // Format the date
+        tooltip.html(`Day: ${formattedDate}<br/>Streams: ${d.streams.toLocaleString()}`) // Show both day and streams
+            .style("visibility", "visible")
+            .style("top", (event.pageY-10) + "px")
+            .style("left", (event.pageX+10) + "px");
         d3.select(this)
-          .attr('fill', '#ffab00');
+            .attr('fill', '#ffab00');
       })
       .on('mousemove', function(event) {
         tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
@@ -106,9 +128,8 @@ export class DailyTrendChart extends BaseChart{
           .attr('fill', '#4c51bf'); 
       })
 
-     // Legend (example for one legend item)
      const legend = svg.append("g")
-     .attr("transform", `translate(${width - 100},${20})`); // Adjust position as needed
+      .attr("transform", `translate(${width - 200},${-20})`);
 
     legend.append("rect")
       .attr("width", 18)
@@ -120,9 +141,8 @@ export class DailyTrendChart extends BaseChart{
       .attr("y", 9)
       .attr("dy", "0.35em")
       .style("text-anchor", "start")
-      .text("Label") // Replace with actual label
+      .text("Total Stream of the day") // Replace with actual label
       .style("font-size", "14px") // Adjust font size as needed
       .style("fill", 'white');
-
   }
 }
